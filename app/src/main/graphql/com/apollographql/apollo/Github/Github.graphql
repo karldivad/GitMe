@@ -1,0 +1,13 @@
+query FindQuery($user_name:String!){
+  user(login: $user_name) {
+    name
+    repositories(last:5) {
+      edges {
+        node {
+          name
+          url
+        }
+      }
+    }
+  }
+}
