@@ -19,45 +19,33 @@ import javax.annotation.Nonnull
 class GetRepositories : AppCompatActivity() {
 
 
-    val BASE_URL = "https://api.github.com/graphql"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_get_repositories)
-        val bundle :Bundle ?=intent.extras
-        val user_name = bundle!!.getString("user_name")
+        val username:String = intent.getStringExtra("user_name")
 
         val client = setupApollo()
 
         client.query(FindQuery
                 .builder()
-                .user_name(user_name.toString())
+                .user_name(username)
                 .build())
                 .enqueue(object : ApolloCall.Callback<FindQuery.Data>() {
                     override fun onFailure(e: ApolloException) {
                         Log.d("ss",e.message.toString())
-
+                        Log.d("ss",e.printStackTrace().toString())
                     }
 
                     override fun onResponse(response: Response<FindQuery.Data>) {
-                        Log.d("ss"," " + response.data()?.user())
+                        Log.d("ssdd"," " + response.data()?.user())
                         runOnUiThread {
-                            /*progress_bar.visibility = View.GONE
-                            name_text_view.text = String.format(getString(R.string.name_text),
-                                    response.data()?.repository()?.name())
-                            description_text_view.text = String.format(getString(R.string.description_text),
-                                    response.data()?.repository()?.description())
-                            forks_text_view.text = String.format(getString(R.string.fork_count_text),
-                                    response.data()?.repository()?.forkCount().toString())
-                            url_text_view.text = String.format(getString(R.string.url_count_text),
-                                    response.data()?.repository()?.url().toString())*/
-                            editText3.setText(String.format(getString(R.string.abc_capital_on),
-                                    response.data()?.user()?.repositories()?.edges()?.last()?.node()?.url().toString()))
+                            /*progress_bar.visibility = View.GONE*/
+                            textView3.setText(response.data()?.user()?.repositories().toString())
 
                         }
                     }
                 })
-
     }
 
     private fun setupApollo(): ApolloClient {
@@ -68,12 +56,12 @@ class GetRepositories : AppCompatActivity() {
                     val builder = original.newBuilder().method(original.method(),
                             original.body())
                     builder.addHeader("Authorization"
-                            , "Bearer " + "<my-code-here>")
+                            , "Bearer " + BuildConfig.GITHUB_TOKEN)
                     chain.proceed(builder.build())
                 }
                 .build()
         return ApolloClient.builder()
-                .serverUrl(BASE_URL)
+                .serverUrl("https://api.github.com/graphql")
                 .okHttpClient(okHttp)
                 .build()
     }

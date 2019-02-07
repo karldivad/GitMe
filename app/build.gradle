@@ -6,6 +6,10 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 28
+
+    def keystorePropertiesFile = rootProject.file("keystore.properties")
+    def keystoreProperties = new Properties()
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
     defaultConfig {
         applicationId "com.example.karldivad.gitme"
         minSdkVersion 21
@@ -13,6 +17,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "GITHUB_TOKEN", keystoreProperties["GITHUB_TOKEN"]
     }
     buildTypes {
         release {
@@ -32,4 +37,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.apollographql.apollo:apollo-rx2-support:1.0.1-SNAPSHOT'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+
+apollo {
+    customTypeMapping = [
+            "URI": "java.lang.String"
+    ]
 }
