@@ -2,6 +2,8 @@ package com.example.karldivad.gitme
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import com.apollographql.apollo.ApolloCall
@@ -19,12 +21,16 @@ import javax.annotation.Nonnull
 
 class GetRepositories : AppCompatActivity() {
 
-
+    val repositories: ArrayList<Repository> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_get_repositories)
         val username:String = intent.getStringExtra("user_name")
+        val context = this
+
+        RepositoryRecyclerV.layoutManager = LinearLayoutManager(this)
+
 
         val client = setupApollo()
 
@@ -34,15 +40,19 @@ class GetRepositories : AppCompatActivity() {
                 .build())
                 .enqueue(object : ApolloCall.Callback<FindQuery.Data>() {
                     override fun onFailure(e: ApolloException) {
-                        Log.d("Error Message: ",e.message.toString())
-                        Log.d("Trace Error: ",e.printStackTrace().toString())
+                        Log.d("Error Message: ", e.message.toString())
+                        Log.d("Trace Error: ", e.printStackTrace().toString())
                     }
 
                     override fun onResponse(response: Response<FindQuery.Data>) {
                         runOnUiThread {
                             progressBar.visibility = View.GONE
-                            textView3.setText(response.data()?.user()?.repositories().toString())
 
+                            val repos = response.data()?.user()?.repositories()?.edges()
+                            repos!!.forEach {
+                                repositories.add(Repository(name = it.node()!!.name(), url = it.node()!!.url()))
+                            }
+                            RepositoryRecyclerV.adapter = RepositoryAdapter(repositories, context)
                         }
                     }
                 })
