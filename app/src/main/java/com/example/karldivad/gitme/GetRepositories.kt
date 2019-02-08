@@ -3,13 +3,14 @@ package com.example.karldivad.gitme
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.Github.FindQuery
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
 import com.apollographql.apollo.rx2.Rx2Apollo
-import com.example.karldivad.gitme.R.styleable.View
+
 import kotlinx.android.synthetic.main.activity_get_repositories.*
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.OkHttpClient
@@ -33,14 +34,13 @@ class GetRepositories : AppCompatActivity() {
                 .build())
                 .enqueue(object : ApolloCall.Callback<FindQuery.Data>() {
                     override fun onFailure(e: ApolloException) {
-                        Log.d("ss",e.message.toString())
-                        Log.d("ss",e.printStackTrace().toString())
+                        Log.d("Error Message: ",e.message.toString())
+                        Log.d("Trace Error: ",e.printStackTrace().toString())
                     }
 
                     override fun onResponse(response: Response<FindQuery.Data>) {
-                        Log.d("ssdd"," " + response.data()?.user())
                         runOnUiThread {
-                            /*progress_bar.visibility = View.GONE*/
+                            progressBar.visibility = View.GONE
                             textView3.setText(response.data()?.user()?.repositories().toString())
 
                         }
