@@ -14,10 +14,9 @@ class RepositoryAdapter (val items : ArrayList<Repository>, val context: Context
 
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
         p0.nameRepo.text = items[p1].name
-        p0.urlRepo.text = items[p1].url
-        if (p1 % 2 == 0){
-            p0.itemView.setBackgroundColor(Color.parseColor("#FFF8DC"))
-        }else{
+        p0.descriptionRepo.text = items[p1].description
+        p0.prcount.text = ("PR Count: " + items[p1].PR_count.toString())
+        if (p1 % 2 != 0){
             p0.itemView.setBackgroundColor(Color.parseColor("#87CEFA"))
         }
 
@@ -35,5 +34,6 @@ class RepositoryAdapter (val items : ArrayList<Repository>, val context: Context
 
 class ViewHolder (view: View) : RecyclerView.ViewHolder(view) {
     val nameRepo : TextView = view.name_txt
-    val urlRepo : TextView = view.url_txt
+    val descriptionRepo : TextView = view.description_txt
+    val prcount : TextView = view.pr_count_int
 }

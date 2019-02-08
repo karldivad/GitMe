@@ -50,7 +50,14 @@ class GetRepositories : AppCompatActivity() {
 
                             val repos = response.data()?.user()?.repositories()?.edges()
                             repos!!.forEach {
-                                repositories.add(Repository(name = it.node()!!.name(), url = it.node()!!.url()))
+                                repositories.add(
+                                        Repository(
+                                                name = it.node()!!.name(),
+                                                url = it.node()!!.url(),
+                                                description = it.node()!!.description().toString(),
+                                                PR_count = it.node()!!.pullRequests().totalCount()
+                                                )
+                                )
                             }
                             RepositoryRecyclerV.adapter = RepositoryAdapter(repositories, context)
                         }
